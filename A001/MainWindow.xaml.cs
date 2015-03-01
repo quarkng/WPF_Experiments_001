@@ -248,6 +248,25 @@ namespace A001
             bindPanel.DataContext = BindExample.GetExample();
         }
 
+        // ========= Data Binding with Notify ========
+
+        private void btnBindNotify_Click(object sender, RoutedEventArgs e)
+        {
+            pnlBindNotify.DataContext = new NotifyingString();
+
+            Thread thread = new Thread(new ParameterizedThreadStart((obj) =>
+            {
+                NotifyingString v = (NotifyingString)obj;
+
+                for(;;)
+                {
+                    v.Val = DateTime.Now.ToString();
+                    Thread.Sleep(1000);
+                }
+            }));
+            thread.Start(pnlBindNotify.DataContext);
+        }
+
         // ========= ========
 
     }

@@ -34,25 +34,6 @@
 
         <!-- ##################################################################################### -->
 
-        <TabItem Header="XAML Viewer">
-                <DockPanel LastChildFill="True">
-                <Button DockPanel.Dock="Top" x:Name="btnViewXaml" Style="{StaticResource BigGreenButton}" Content="View Xaml" Click="btnViewXaml_Click"/>
-                    <TextBox AcceptsReturn="True" x:Name="txtXamlData" FontSize="14" Background="Black" Foreground="Yellow" 
-			                BorderBrush="Blue" VerticalScrollBarVisibility="Auto" AcceptsTab="True"/>
-                </DockPanel>
-            </TabItem>
-
-            <!-- ##################################################################################### -->
-
-            <TabItem Header="TabItem">
-                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <Button x:Name="myButton3" Width="100" Height="100" Template="{StaticResource RoundButtonTemplate}" Content="This Big" Background="#FFBF3636" />
-                <Button x:Name="myButton4" Width="100" Height="100" Style="{StaticResource StyleWithTemplate}"  Content="This Big2"/>
-            </StackPanel>
-            </TabItem>
-            
-            <!-- ##################################################################################### -->
-            
         <TabItem x:Name="tabDataBinding" Header="Data Binding">
             <StackPanel Width="250">
                 <Label Content="Move the scroll bar to see the current value"/>
@@ -74,12 +55,46 @@
                     <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=BindInt}"/>
                     <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=BindStr}"/>
                 </StackPanel>
-                
-                
-                
-                
+
+
+
             </StackPanel>
         </TabItem>
+
+        <!-- ##################################################################################### -->
+
+
+        <TabItem x:Name="tabDataBinding2" Header="Data Binding2">
+            <StackPanel Margin="10">
+                <Button x:Name="btnBindNotify" Margin="10" Height="30" Width="200" Content="Fill by data binding." Click="btnBindNotify_Click"/>
+                <StackPanel x:Name="pnlBindNotify" Margin="10,0">
+                    <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=Val}"/>
+                </StackPanel>
+                
+                <Rectangle Fill="#FF2F2FBD" Height="10" Stroke="Black"/>
+
+            </StackPanel>
+        </TabItem>
+
+        <!-- ##################################################################################### -->
+
+        <TabItem Header="XAML Viewer">
+                <DockPanel LastChildFill="True">
+                <Button DockPanel.Dock="Top" x:Name="btnViewXaml" Style="{StaticResource BigGreenButton}" Content="View Xaml" Click="btnViewXaml_Click"/>
+                    <TextBox AcceptsReturn="True" x:Name="txtXamlData" FontSize="14" Background="Black" Foreground="Yellow" 
+			                BorderBrush="Blue" VerticalScrollBarVisibility="Auto" AcceptsTab="True"/>
+                </DockPanel>
+            </TabItem>
+
+            <!-- ##################################################################################### -->
+
+            <TabItem Header="TabItem">
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <Button x:Name="myButton3" Width="100" Height="100" Template="{StaticResource RoundButtonTemplate}" Content="This Big" Background="#FFBF3636" />
+                <Button x:Name="myButton4" Width="100" Height="100" Style="{StaticResource StyleWithTemplate}"  Content="This Big2"/>
+            </StackPanel>
+            </TabItem>
+            
 
         <!-- ##################################################################################### -->
 
