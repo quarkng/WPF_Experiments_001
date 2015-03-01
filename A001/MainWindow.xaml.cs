@@ -27,7 +27,6 @@ namespace A001
     {
         private string filename = "YourXaml.xaml";
 
-
         public MainWindow()
         {
             InitializeComponent();
@@ -240,6 +239,13 @@ namespace A001
             multithread_gettime3.IsEnabled = true;
             multithread3_cancel.IsEnabled = false;
             multithread3_progress.Value = 0;
+        }
+
+
+        // ========= Data Binding ========
+        private void bindFill_Click(object sender, RoutedEventArgs e)
+        {
+            bindPanel.DataContext = BindExample.GetExample();
         }
 
         // ========= ========

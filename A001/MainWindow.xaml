@@ -62,12 +62,22 @@
 
                 <!-- The label's content will be bound to the scroll bar! -->
                 <Label x:Name="labelSBThumb" Height="30" BorderBrush="Blue" BorderThickness="2" Content = "{Binding Path=Value, ElementName=mySB}"/>
-
-
-                <!-- Breaking object/value apart via DataContext -->
                 <Label x:Name="labelSBThumb2" Height="30" BorderBrush="Blue" BorderThickness="2" DataContext = "{Binding ElementName=mySB}" Content = "{Binding Path=Value}" />
-
                 <Ellipse Height="{Binding Path=Value, ElementName=mySB}" Width="{Binding Path=Value, ElementName=mySB}" Fill="Chocolate"/>
+
+                <Rectangle Fill="#FF2F2FBD" Height="10" Stroke="Black"/>
+                <!-- bind to object -->
+                <Button x:Name="bindFill" Margin="10" Height="30" Width="200" Content="Fill by data binding." Click="bindFill_Click"/>
+                <StackPanel x:Name="bindPanel" Margin="10,0">
+                    <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=BindDatetime}"/>
+                    <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=BindDouble}"/>
+                    <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=BindInt}"/>
+                    <TextBox Height="23" TextWrapping="Wrap" Text="{Binding Path=BindStr}"/>
+                </StackPanel>
+                
+                
+                
+                
             </StackPanel>
         </TabItem>
 
