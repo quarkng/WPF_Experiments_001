@@ -26,10 +26,13 @@ namespace A001
     public partial class MainWindow : Window
     {
         private string filename = "YourXaml.xaml";
+        private List<Thread> openThreads = new List<Thread>();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            Thread.Sleep(1000); // make sure splash screen shows for at least 1 second
         }
 
 
@@ -42,6 +45,11 @@ namespace A001
             if ( result == MessageBoxResult.No )
             {   // user does not want to close
                 e.Cancel = true;
+            }
+
+            foreach( var t in openThreads )
+            {
+                t.Abort();
             }
         }
 
@@ -265,6 +273,8 @@ namespace A001
                 }
             }));
             thread.Start(pnlBindNotify.DataContext);
+
+            openThreads.Add(thread); // so that we can kill the thread when the program closes
         }
 
         // ========= ========
