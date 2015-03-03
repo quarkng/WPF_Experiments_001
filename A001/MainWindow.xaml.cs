@@ -36,24 +36,24 @@ namespace A001
         }
 
 
-        private void MainWindow_Closing( object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // see if the user really wants to shut down this window
             string msg = "Do you really want to close?";
             MessageBoxResult result = MessageBox.Show(msg, "Closing Window", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
-            if ( result == MessageBoxResult.No )
+            if (result == MessageBoxResult.No)
             {   // user does not want to close
                 e.Cancel = true;
             }
 
-            foreach( var t in openThreads )
+            foreach (var t in openThreads)
             {
                 t.Abort();
             }
         }
 
-        private void MainWindow_Closed( object sender, EventArgs e)
+        private void MainWindow_Closed(object sender, EventArgs e)
         {
             File.WriteAllText(filename, txtXamlData.Text);
             Application.Current.Shutdown();
@@ -71,7 +71,7 @@ namespace A001
             Window myWindow = null; // This is the dynamic window
             try
             {
-                using( Stream sr = File.Open(filename, FileMode.Open) )
+                using (Stream sr = File.Open(filename, FileMode.Open))
                 {
                     myWindow = (Window)XamlReader.Load(sr);
                 }
@@ -88,7 +88,7 @@ namespace A001
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if( File.Exists(filename))
+            if (File.Exists(filename))
             {
                 txtXamlData.Text = File.ReadAllText(filename);
             }
@@ -106,7 +106,7 @@ namespace A001
 
 
 
-        // ========= multithread ========
+        # region // ========= multithread ========
 
         private void multithread_gettime_Click(object sender, RoutedEventArgs e)
         {
@@ -119,7 +119,7 @@ namespace A001
 
         private void Multithread_GetTimeThread()
         {
-            for (int i = 0; i < 5; i++ )
+            for (int i = 0; i < 5; i++)
             {
                 // Time consuming wait
                 Thread.Sleep(TimeSpan.FromSeconds(2));
@@ -134,14 +134,14 @@ namespace A001
         {   // Update text on UI.  Delegate must be short and fast.
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate() { multithread_txtBox.Text = val; });
         }
-        
+
         public void Update_Multithread_gettime_enable(bool val)
         {
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate() { multithread_gettime.IsEnabled = val; });
         }
+        #endregion
 
-
-        // ========= multithread with async & await ========
+        #region // ========= multithread with async & await ========
 
         private async void multithread_gettime_Click2(object sender, RoutedEventArgs e)
         {
@@ -165,8 +165,9 @@ namespace A001
             Thread.Sleep(TimeSpan.FromSeconds(waitTimeInt));
             return DateTime.Now.ToString();
         }
+        #endregion
 
-        // ========= multithread Background Worker ========
+        #region // ========= multithread Background Worker ========
 
         string multithread3_string = "Nothing yet";
         private readonly BackgroundWorker multithread3_BGWorker = new BackgroundWorker();
@@ -174,7 +175,7 @@ namespace A001
 
         private void multithread_gettime_Click3(object sender, RoutedEventArgs e)
         {
-            if( ! bgInitDone )
+            if (!bgInitDone)
             {
                 bgInitDone = true;
                 multithread3_BGWorker.WorkerReportsProgress = true;
@@ -202,11 +203,11 @@ namespace A001
         }
 
 
-        private void multithread3_DoWork( object sender, DoWorkEventArgs e)
+        private void multithread3_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            for (int i = 0; i < 10; i++  )
+            for (int i = 0; i < 10; i++)
             {
                 if (worker.CancellationPending == true)
                 {
@@ -230,7 +231,7 @@ namespace A001
 
         private void multithread3_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if( e.Cancelled == true )
+            if (e.Cancelled == true)
             {
                 multithread_txtBox3.Text = "Canceled";
             }
@@ -249,15 +250,81 @@ namespace A001
             multithread3_progress.Value = 0;
         }
 
+        #endregion
 
-        // ========= Data Binding ========
+
+        #region // ========= multithread TPL ========
+        CancellationTokenSource ts;
+        Task<String> multithread4_tsk;
+
+        private void multithread4_gettime_Click(object sender, RoutedEventArgs e)
+        {
+            ts = new CancellationTokenSource();
+
+            multithread4_gettime.IsEnabled = false;
+            multithread4_txtBox.Text = "Wait for it...";
+            multithread4_cancel.IsEnabled = true;
+
+            multithread4_tsk = Task<String>.Factory.StartNew(() => multithread4_worker(), ts.Token);
+
+            var canceled = multithread4_tsk.ContinueWith(canceledTask => 
+                {
+                    multithread4_txtBox.Text = "Canceled";
+                    multithread4_gettime.IsEnabled = true;
+                    multithread4_cancel.IsEnabled = false;
+                },
+                                               CancellationToken.None,
+                                               TaskContinuationOptions.OnlyOnCanceled,
+                                               TaskScheduler.FromCurrentSynchronizationContext());
+
+            var completed = multithread4_tsk.ContinueWith(completedTask =>
+            {
+                multithread4_txtBox.Text = completedTask.Result;
+                multithread4_gettime.IsEnabled = true;
+                multithread4_cancel.IsEnabled = false;
+            },
+                                               CancellationToken.None,
+                                               TaskContinuationOptions.OnlyOnRanToCompletion,
+                                               TaskScheduler.FromCurrentSynchronizationContext());
+
+        }
+
+        private void multithread4_cancel_Click(object sender, RoutedEventArgs e)
+        {
+            ts.Cancel();
+        }
+
+        private string multithread4_worker()
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+                try
+                {
+                    ts.Token.ThrowIfCancellationRequested();
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+            }
+
+            return DateTime.Now.ToString(); ;
+        }
+
+        #endregion
+
+
+
+        #region // ========= Data Binding ========
         private void bindFill_Click(object sender, RoutedEventArgs e)
         {
             bindPanel.DataContext = BindExample.GetExample();
         }
+        #endregion
 
-        // ========= Data Binding with Notify ========
 
+        #region // ========= Data Binding with Notify ========
         private void btnBindNotify_Click(object sender, RoutedEventArgs e)
         {
             pnlBindNotify.DataContext = new NotifyingString();
@@ -266,7 +333,7 @@ namespace A001
             {
                 NotifyingString v = (NotifyingString)obj;
 
-                for(;;)
+                for (; ; )
                 {
                     v.Val = DateTime.Now.ToString();
                     Thread.Sleep(1000);
@@ -276,6 +343,8 @@ namespace A001
 
             openThreads.Add(thread); // so that we can kill the thread when the program closes
         }
+
+        #endregion
 
         // ========= ========
 
