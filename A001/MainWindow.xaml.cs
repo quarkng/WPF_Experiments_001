@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.ComponentModel;
 
+
 namespace A001
 {
     /// <summary>
@@ -114,6 +115,7 @@ namespace A001
             Update_Multithread_txtBox("Getting time now...");
 
             Thread thread = new Thread(Multithread_GetTimeThread);
+            thread.Name = "Getting Time - Multithread";
             thread.Start();
         }
 
@@ -139,6 +141,7 @@ namespace A001
         {
             this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate() { multithread_gettime.IsEnabled = val; });
         }
+
         #endregion
 
         #region // ========= multithread with async & await ========
@@ -254,11 +257,16 @@ namespace A001
 
 
         #region // ========= multithread TPL ========
+
+        // Ref MSDN: Task-based Asynchronous Pattern (TAP)
+
         CancellationTokenSource ts;
         Task<String> multithread4_tsk;
+        Progress<double> progRep = null;
 
         private void multithread4_gettime_Click(object sender, RoutedEventArgs e)
         {
+            progRep = new Progress<double>((val) => { multithread4_progress.Value = val; });
             ts = new CancellationTokenSource();
 
             multithread4_gettime.IsEnabled = false;
@@ -272,6 +280,7 @@ namespace A001
                     multithread4_txtBox.Text = "Canceled";
                     multithread4_gettime.IsEnabled = true;
                     multithread4_cancel.IsEnabled = false;
+                    multithread4_progress.Value = 0;
                 },
                                                CancellationToken.None,
                                                TaskContinuationOptions.OnlyOnCanceled,
@@ -282,6 +291,7 @@ namespace A001
                 multithread4_txtBox.Text = completedTask.Result;
                 multithread4_gettime.IsEnabled = true;
                 multithread4_cancel.IsEnabled = false;
+                multithread4_progress.Value = 0;
             },
                                                CancellationToken.None,
                                                TaskContinuationOptions.OnlyOnRanToCompletion,
@@ -299,6 +309,8 @@ namespace A001
             for (int i = 0; i < 7; i++)
             {
                 Thread.Sleep(TimeSpan.FromSeconds(1));
+
+                ((IProgress<double>)progRep).Report( 100.0 * (i+1.0)/7.0 );
                 try
                 {
                     ts.Token.ThrowIfCancellationRequested();

@@ -31,8 +31,8 @@
 
                 <TextBox x:Name ="multithread4_txtBox"   Height="23" Text="Nothing yet"/>
                 <StackPanel Orientation="Horizontal">
-                    <Button  x:Name ="multithread4_gettime" Content="Get time - TPL" Click="multithread4_gettime_Click"/>
-                    <Button  x:Name ="multithread4_cancel" Content="Cancel" IsEnabled="False" Click="multithread4_cancel_Click"/>
+                    <Button  x:Name ="multithread4_gettime" Content="Get time - TPL" Click="multithread4_gettime_Click" Margin="10" Padding="10"/>
+                    <Button  x:Name ="multithread4_cancel" Content="Cancel" IsEnabled="False" Click="multithread4_cancel_Click" Margin="10" Padding="10"/>
                 </StackPanel>
                 <ProgressBar x:Name="multithread4_progress" Height="10"/>
                 <Rectangle Fill="#FF2F2FBD" Height="10" Stroke="Black"/>
